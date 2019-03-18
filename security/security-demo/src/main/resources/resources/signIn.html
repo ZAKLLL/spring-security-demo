@@ -10,13 +10,20 @@
 
 <div>
     <form action="/authentication/form" method="post">
-        <td>用户名</td>
-        <input type="text" name="username" >
-        <br>
-        <td>密码</td>
-        <input type="password" name="password" >
-
-        <input type="submit" >
+        <tr>
+            <td>用户名</td>
+            <input type="text" name="username">
+        </tr>
+        <tr>
+            <td>密码</td>
+            <input type="password" name="password">
+        </tr>
+        <!--验证码加载的时候后台就已经将验证码存放如session中了-->
+        <tr>
+            <input type="text" name="imageCode" />
+            <img src="/code/image">
+        </tr>
+        <input type="submit">
 
     </form>
 </div>

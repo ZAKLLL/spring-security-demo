@@ -4,6 +4,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.zakl.security.securitydemo.dto.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.boot.actuate.endpoint.SecurityContext;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,5 +49,30 @@ public class Usercontroller {
         }
         System.out.println(user.getId() + " " + user.getUsername() + " " + user.getPassword());
     }
+
+
+    //下面的两个方法都是一样的作用，返回登录用户的认证信息
+    @GetMapping("/user/me")
+    @ResponseBody
+    public Object GetCurrentUser() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    @GetMapping("/user/me2")
+    @ResponseBody
+    public Object GetCurrentUser2(Authentication authentication) {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    @GetMapping("/user/me3")
+    @ResponseBody
+    public Object GetCurrentUser3(@AuthenticationPrincipal UserDetails detail) {
+        return detail;
+
+    }
+
+
+
+
 
 }

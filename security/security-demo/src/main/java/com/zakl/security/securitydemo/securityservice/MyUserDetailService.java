@@ -27,8 +27,8 @@ public class MyUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         String encodedpassword = passwordEncoder.encode("123456");
 
-        logger.info(name+"正在登陆"+encodedpassword);
-        logger.info("数据库中的密码为");
+        logger.info(name+"正在登陆");
+        logger.info("数据库中的密码为"+encodedpassword);
         return new User(name, encodedpassword,true,true,true,true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
 
     }
