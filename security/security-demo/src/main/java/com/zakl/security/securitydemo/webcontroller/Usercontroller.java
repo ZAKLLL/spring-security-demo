@@ -2,6 +2,7 @@ package com.zakl.security.securitydemo.webcontroller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.zakl.security.securitydemo.dto.User;
+import com.zakl.security.securitydemo.errror.UserNotExistException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.BindingResult;
@@ -32,6 +33,9 @@ public class Usercontroller {
     @ApiOperation("pathvariable风格")
     @JsonView(User.UserDetailView.class) //表示返回User中的Userdetail细节，需要在User类中定义的对应的接口
     public User queryUserById(@PathVariable("id") String id) {
+        if(Integer.parseInt(id)==1){
+            throw new UserNotExistException((long) Integer.parseInt(id));
+        }
         User user = new User("张三", "王二");
         return user;
     }
@@ -43,6 +47,14 @@ public class Usercontroller {
             errors.getAllErrors().stream().forEach(error->System.out.println(error.getDefaultMessage()));
         }
         System.out.println(user.getId() + " " + user.getUsername() + " " + user.getPassword());
+    }
+
+    @PutMapping("/update")
+    public void update(@Valid @RequestBody User user, BindingResult errors) {
+        if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach(error->System.out.println(error.getDefaultMessage()));
+        }
+        System.out.println(user.getUsername());
     }
 
 }

@@ -6,7 +6,6 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="security" />
         <module name="security-app" />
         <module name="security-browser" />
         <module name="security-core" />
@@ -17,6 +16,7 @@
       <module name="security" target="1.8" />
       <module name="security-app" target="1.8" />
       <module name="security-browser" target="1.8" />
+      <module name="security-browser2" target="1.8" />
       <module name="security-core" target="1.8" />
       <module name="security-demo" target="1.8" />
     </bytecodeTargetLevel>
@@ -26,6 +26,7 @@
       <module name="security" options="-parameters" />
       <module name="security-app" options="-parameters" />
       <module name="security-browser" options="-parameters" />
+      <module name="security-browser2" options="-parameters" />
       <module name="security-core" options="-parameters" />
       <module name="security-demo" options="-parameters" />
     </option>
