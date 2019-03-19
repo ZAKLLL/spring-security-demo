@@ -21,7 +21,8 @@
         <!--验证码加载的时候后台就已经将验证码存放如session中了-->
         <tr>
             <input type="text" name="imageCode" />
-            <img src="/code/image">
+            <!--请求中可以设置width，height参数以获得符合要求的图形验证码-->
+            <img src="/code/image?width=70">
         </tr>
         <input type="submit">
 

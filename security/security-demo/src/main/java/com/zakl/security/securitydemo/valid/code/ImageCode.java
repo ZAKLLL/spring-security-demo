@@ -1,14 +1,13 @@
 package com.zakl.security.securitydemo.valid.code;
 
 import java.awt.image.BufferedImage;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
  * @program: security
- * @description: 图形验证码信息
+ * @description: 图形验证码实体类
  * @author: Mr.Wang
- * @create: 2019-03-18 19:50
+ * @create: 2019-03-19 19:24
  **/
 public class ImageCode {
     private BufferedImage image;
@@ -16,13 +15,13 @@ public class ImageCode {
     private LocalDateTime expireTime; //过期时间点
 
 
-
     public ImageCode(BufferedImage image, String code, LocalDateTime expireTime) {
         this.image = image;
         this.code = code;
         this.expireTime = expireTime;
     }
-    public ImageCode(BufferedImage image, String code, int  expireIn) {
+
+    public ImageCode(BufferedImage image, String code, int expireIn) {
         this.image = image;
         this.code = code;
         this.expireTime = LocalDateTime.now().plusSeconds(expireIn);  //设置图形验证码过期时间点
@@ -54,6 +53,7 @@ public class ImageCode {
 
     //验证是否过期
     public boolean isExpried() {
+
         return LocalDateTime.now().isAfter(expireTime);
     }
 }

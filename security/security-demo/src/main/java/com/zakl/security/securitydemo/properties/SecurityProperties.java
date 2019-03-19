@@ -12,12 +12,22 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SecurityProperties {
 
     private BroswerProperties broswer = new BroswerProperties();
+    private ValidateCodeProterties code=new ValidateCodeProterties();
+
+    public ValidateCodeProterties getCode() {
+        return code;
+    }
+
+    public void setCode(ValidateCodeProterties code) {
+        this.code = code;
+    }
 
     public BroswerProperties getBroswer() {
         return broswer;
     }
-
     public void setBroswer(BroswerProperties broswer) {
         this.broswer = broswer;
     }
+
+
 }

@@ -26,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private SecurityProperties properties;
 
     @Autowired
-    private MyAuthenticationSuccessHandler MyAuthenticationSuccessHandler;
+    private MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
 
     @Autowired
     private MyAuthenticationFailureHandler myAuthenticationFailureHandler;
@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/authentication/require") //跳转到SecurityController中进行判断处理
                 .loginProcessingUrl("/authentication/form") //处理表单发起的请求
-                .successHandler(MyAuthenticationSuccessHandler)//使用自定义的请求成功处理器
+                .successHandler(myAuthenticationSuccessHandler)//使用自定义的请求成功处理器
                 .failureHandler(myAuthenticationFailureHandler)
                 .and()
                 .authorizeRequests()

@@ -1,11 +1,14 @@
 package com.zakl.security.securitydemo.valid.code;
 
+import com.zakl.security.securitydemo.properties.SecurityProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.social.connect.web.HttpSessionSessionStrategy;
 import org.springframework.social.connect.web.SessionStrategy;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -16,6 +19,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -24,37 +29,68 @@ import java.io.IOException;
  * @author: Mr.Wang
  * @create: 2019-03-18 20:33
  **/
-public class ValidateCodeFilter extends OncePerRequestFilter {
+
+//InitializingBean接口为bean提供了初始化方法的方式，它只包括afterPropertiesSet方法，凡是继承该接口的类，在初始化bean的时候都会执行该方法。
+public class ValidateCodeFilter extends OncePerRequestFilter implements InitializingBean {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private SessionStrategy sessionStrategy=new HttpSessionSessionStrategy();
+    private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
+
+    private Set<String> urls = new HashSet<>();
+
+    private SecurityProperties securityProperties;
 
     private AuthenticationFailureHandler authenticationFailureHandler;
+
+    //spring提供的工具类，用来匹配url
+    private AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    //当传入参数初始化之后执行该方法,将配置信息中的需要拦截的url放置在urls中
+    @Override
+    public void afterPropertiesSet() throws ServletException {
+        super.afterPropertiesSet();
+        String[] configUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(
+                securityProperties.getCode().getImage().getUrl(), ",");
+        for (String configUrl : configUrls) {
+            urls.add(configUrl);
+        }
+        urls.add("/authentication/form");
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        logger.info("进入图形验证过滤器");
+
+        //循环判断，判断请求中的url是否和参数中配置的任何一个url相匹配，如果匹配，则进行验证码验证
+        boolean action = false;
+        for (String url : urls) {
+            if (pathMatcher.match(url, httpServletRequest.getRequestURI())) {
+                action = true;
+            }
+        }
 
         //当请求中包含登录请求时候进行验证,当
         if (StringUtils.equals("/authentication/form", httpServletRequest.getRequestURI())
                 && StringUtils.equalsIgnoreCase(httpServletRequest.getMethod(), "post")) {
+            logger.info("开始进行图形验证码校验");
             try {
                 //验证封装后的httpServletRequest
                 validate(new ServletWebRequest(httpServletRequest));
-            }catch (ValidateCodeException e){
+            } catch (ValidateCodeException e) {
                 //用登录失败处理器处理验证码匹配异常
-                authenticationFailureHandler.onAuthenticationFailure(httpServletRequest,httpServletResponse,e);
+                authenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, e);
+                //校验失败后直接返回不在进行登录业务操作
+                return;
             }
 
         }
-
-
-        doFilter(httpServletRequest,httpServletResponse,filterChain);
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
 
     }
 
+    //执行验证码校对逻辑，如果校对失败返回自定义异常
     private void validate(ServletWebRequest servletWebRequest) throws ServletRequestBindingException {
         //从session中取出imageCode
-        ImageCode imageCodeInSession =(ImageCode)sessionStrategy.getAttribute(servletWebRequest, ValidateController.SESSION_KEY);
+        ImageCode imageCodeInSession = (ImageCode) sessionStrategy.getAttribute(servletWebRequest, ValidateController.SESSION_KEY);
 
         //从request中取出imageCode
         String imageCodeInRequest = ServletRequestUtils.getStringParameter(servletWebRequest.getRequest(), "imageCode");
@@ -67,15 +103,16 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
         }
         if (imageCodeInSession.isExpried()) {
             //清空过期的验证码
-            sessionStrategy.removeAttribute(servletWebRequest,ValidateController.SESSION_KEY);
+            sessionStrategy.removeAttribute(servletWebRequest, ValidateController.SESSION_KEY);
             throw new ValidateCodeException("验证码已过期");
         }
-        if (StringUtils.equals(imageCodeInSession.getCode(),imageCodeInRequest)) {
+        if (!StringUtils.equalsIgnoreCase(imageCodeInSession.getCode(), imageCodeInRequest)) {
             throw new ValidateCodeException("验证码不匹配");
         }
 
+        logger.info("图形码校验成功");
         //验证完毕后清空session中的验证码
-        sessionStrategy.removeAttribute(servletWebRequest,ValidateController.SESSION_KEY);
+        sessionStrategy.removeAttribute(servletWebRequest, ValidateController.SESSION_KEY);
     }
 
     public SessionStrategy getSessionStrategy() {
@@ -92,5 +129,21 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
 
     public void setAuthenticationFailureHandler(AuthenticationFailureHandler authenticationFailureHandler) {
         this.authenticationFailureHandler = authenticationFailureHandler;
+    }
+
+    public SecurityProperties getSecurityProperties() {
+        return securityProperties;
+    }
+
+    public void setSecurityProperties(SecurityProperties securityProperties) {
+        this.securityProperties = securityProperties;
+    }
+
+    public Set<String> getUrls() {
+        return urls;
+    }
+
+    public void setUrls(Set<String> urls) {
+        this.urls = urls;
     }
 }

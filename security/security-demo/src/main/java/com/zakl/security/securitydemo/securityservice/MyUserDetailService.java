@@ -21,15 +21,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class MyUserDetailService implements UserDetailsService {
     Logger logger = LoggerFactory.getLogger(this.getClass());
-    @Autowired //用来处理密码加密解密
+
+    @Autowired //用来处理密码加密解密,该加密器在securityConfig中进行了Spring注册
     private PasswordEncoder passwordEncoder;
+
     @Override  //UserDetails是处理用户校验逻辑的接口
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         String encodedpassword = passwordEncoder.encode("123456");
 
-        logger.info(name+"正在登陆");
-        logger.info("数据库中的密码为"+encodedpassword);
-        return new User(name, encodedpassword,true,true,true,true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+        logger.info(name + "正在登陆");
+        logger.info("数据库中的密码为" + encodedpassword);
+        return new User(name, encodedpassword, true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
 
     }
 }

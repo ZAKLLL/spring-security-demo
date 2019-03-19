@@ -2,6 +2,7 @@ package com.zakl.security.securitydemo.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zakl.security.securitydemo.config.SecurityPropertiesConfig;
+import com.zakl.security.securitydemo.dto.ResultMessage;
 import com.zakl.security.securitydemo.properties.LoginType;
 import com.zakl.security.securitydemo.properties.SecurityProperties;
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public class MyAuthenticationFailureHandler extends SimpleUrlAuthenticationFailu
         if (securityProperties.getBroswer().getLoginType() == LoginType.JSON) {
             httpServletResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             httpServletResponse.setContentType("application/json;charset=UTF-8");
-            httpServletResponse.getWriter().write(objectMapper.writeValueAsString(e));
+            httpServletResponse.getWriter().write(objectMapper.writeValueAsString(new ResultMessage("1000",e.getMessage())));
         }
         else {
             super.onAuthenticationFailure(httpServletRequest,httpServletResponse,e);
