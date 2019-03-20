@@ -10,17 +10,19 @@ import org.springframework.stereotype.Component;
  **/
 
 public class BroswerProperties {
-    private String loginPage="/signIn.html";
+    private String loginPage = "/signIn.html";
 
-    public String getLoginPage() {
-        return loginPage;
+    private LoginType loginType = LoginType.JSON;
+
+    private int rememberMeSeconds = 3600;
+
+    public int getRememberMeSeconds() {
+        return rememberMeSeconds;
     }
 
-    public void setLoginPage(String loginPage) {
-        this.loginPage = loginPage;
+    public void setRememberMeSeconds(int rememberMeSeconds) {
+        this.rememberMeSeconds = rememberMeSeconds;
     }
-
-    LoginType loginType=LoginType.JSON;
 
     public LoginType getLoginType() {
         return loginType;
@@ -28,5 +30,13 @@ public class BroswerProperties {
 
     public void setLoginType(LoginType loginType) {
         this.loginType = loginType;
+    }
+
+    public void setLoginPage(String loginPage) {
+        this.loginPage = loginPage;
+    }
+
+    public String getLoginPage() {
+        return loginPage;
     }
 }

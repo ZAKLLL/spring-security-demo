@@ -4,14 +4,11 @@ import com.zakl.security.securitydemo.properties.ImageCodeProperties;
 import com.zakl.security.securitydemo.properties.SecurityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.ServletRequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.time.LocalDateTime;
 import java.util.Random;
 
 /**
@@ -20,7 +17,6 @@ import java.util.Random;
  * @author: Mr.Wang
  * @create: 2019-03-19 15:40
  **/
-//@Component
 public class ImageCodeGenerator implements ValidateCodeGenerator {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -35,7 +31,7 @@ public class ImageCodeGenerator implements ValidateCodeGenerator {
     }
 
     @Override
-    public ImageCode createImageCode(HttpServletRequest request) {
+    public ImageCode createValidateCode(HttpServletRequest request) {
         ImageCodeProperties imageCodeProperties = securityProperties.getCode().getImage();
         ImageImpl image = new ImageImpl(imageCodeProperties.getWidth(), imageCodeProperties.getHeight(), imageCodeProperties.getLength(), request);
         BufferedImage bufferedImage = image.getImage();

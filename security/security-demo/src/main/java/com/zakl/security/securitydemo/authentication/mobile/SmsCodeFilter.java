@@ -1,6 +1,9 @@
-package com.zakl.security.securitydemo.valid.code;
+package com.zakl.security.securitydemo.authentication.mobile;
 
 import com.zakl.security.securitydemo.properties.SecurityProperties;
+import com.zakl.security.securitydemo.valid.code.ValidateCode;
+import com.zakl.security.securitydemo.valid.code.ValidateCodeException;
+import com.zakl.security.securitydemo.valid.code.ValidateController;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +34,7 @@ import java.util.Set;
  **/
 
 //InitializingBean接口为bean提供了初始化方法的方式，它只包括afterPropertiesSet方法，凡是继承该接口的类，在初始化bean的时候都会执行该方法。
-public class ValidateCodeFilter extends OncePerRequestFilter implements InitializingBean {
+public class SmsCodeFilter extends OncePerRequestFilter implements InitializingBean {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
@@ -50,11 +53,11 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
     public void afterPropertiesSet() throws ServletException {
         super.afterPropertiesSet();
         String[] configUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(
-                securityProperties.getCode().getImage().getUrl(), ",");
+                securityProperties.getCode().getSms().getUrl(), ",");
         for (String configUrl : configUrls) {
             urls.add(configUrl);
         }
-        urls.add("/authentication/form");
+        urls.add("/authentication/mobile");
     }
 
     @Override
@@ -89,30 +92,30 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
 
     //执行验证码校对逻辑，如果校对失败返回自定义异常
     private void validate(ServletWebRequest servletWebRequest) throws ServletRequestBindingException {
-        //从session中取出imageCode
-        ImageCode imageCodeInSession = (ImageCode) sessionStrategy.getAttribute(servletWebRequest, ValidateController.SESSION_KEY_IMAGE);
+        //从session中取出smsCode
+        ValidateCode validateCodeinsession = (ValidateCode) sessionStrategy.getAttribute(servletWebRequest, ValidateController.SESSION_KEY_SMS);
 
-        //从request中取出imageCode
-        String imageCodeInRequest = ServletRequestUtils.getStringParameter(servletWebRequest.getRequest(), "imageCode");
+        //从request中取出smsCode
+        String smsCode = ServletRequestUtils.getStringParameter(servletWebRequest.getRequest(), "mobile");
 
-        if (StringUtils.isBlank(imageCodeInRequest)) {
+        if (StringUtils.isBlank(smsCode)) {
             throw new ValidateCodeException("验证码不能为空");
         }
-        if (imageCodeInSession == null) {
+        if (validateCodeinsession == null) {
             throw new ValidateCodeException("验证码不存在");
         }
-        if (imageCodeInSession.isExpried()) {
+        if (validateCodeinsession.isExpried()) {
             //清空过期的验证码
-            sessionStrategy.removeAttribute(servletWebRequest, ValidateController.SESSION_KEY_IMAGE);
+            sessionStrategy.removeAttribute(servletWebRequest, ValidateController.SESSION_KEY_SMS);
             throw new ValidateCodeException("验证码已过期");
         }
-        if (!StringUtils.equalsIgnoreCase(imageCodeInSession.getCode(), imageCodeInRequest)) {
+        if (!StringUtils.equalsIgnoreCase(validateCodeinsession.getCode(), smsCode)) {
             throw new ValidateCodeException("验证码不匹配");
         }
 
-        logger.info("图形码校验成功");
+        logger.info("短信验证码校验成功");
         //验证完毕后清空session中的验证码
-        sessionStrategy.removeAttribute(servletWebRequest, ValidateController.SESSION_KEY_IMAGE);
+        sessionStrategy.removeAttribute(servletWebRequest, ValidateController.SESSION_KEY_SMS);
     }
 
     public SessionStrategy getSessionStrategy() {

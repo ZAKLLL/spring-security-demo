@@ -6,20 +6,12 @@ package com.zakl.security.securitydemo.properties;
  * @author: Mr.Wang
  * @create: 2019-03-19 10:00
  **/
-public class ImageCodeProperties {
+public class ImageCodeProperties extends SmsCodeProperties {
     private int width = 70; // 宽
     private int height = 35; // 高
-    private int length=4;  //长度
-    private int expireIn=30; //过期时间
 
-    private String url; //需要被验证码过滤器拦截的url
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
+    public ImageCodeProperties(){
+        setLength(4);
     }
 
     public int getWidth() {
@@ -38,19 +30,4 @@ public class ImageCodeProperties {
         this.height = height;
     }
 
-    public int getLength() {
-        return length;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
-    }
-
-    public int getExpireIn() {
-        return expireIn;
-    }
-
-    public void setExpireIn(int expireIn) {
-        this.expireIn = expireIn;
-    }
 }

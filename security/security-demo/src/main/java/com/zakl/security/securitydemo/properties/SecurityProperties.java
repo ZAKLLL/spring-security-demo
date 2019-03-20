@@ -14,6 +14,7 @@ public class SecurityProperties {
     private BroswerProperties broswer = new BroswerProperties();
     private ValidateCodeProterties code=new ValidateCodeProterties();
 
+
     public ValidateCodeProterties getCode() {
         return code;
     }
