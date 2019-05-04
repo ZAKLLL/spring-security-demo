@@ -48,16 +48,17 @@ public class ValidateController {
     @GetMapping("/code/image")
     public void createCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ImageCode imageCode = (ImageCode) defaultImageCodeGenerator.createValidateCode(request);
-        sessionStrategy.setAttribute(new ServletWebRequest(request), SESSION_KEY_IMAGE, imageCode);
+
+        ValidateCode code = new ValidateCode(imageCode.getCode(), imageCode.getExpireTime());
+        sessionStrategy.setAttribute(new ServletWebRequest(request), SESSION_KEY_IMAGE, code);
         //将图片信息返回给前端
         ImageIO.write(imageCode.getImage(), "JPG", response.getOutputStream());
     }
 
     @GetMapping("/code/smsCode")
-    public void createSmsCode(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletRequestBindingException {
+    public void createSmsCode(HttpServletRequest request) throws IOException, ServletRequestBindingException {
         ValidateCode smsCode = smsCodeGenerator.createValidateCode(request);
         sessionStrategy.setAttribute(new ServletWebRequest(request), SESSION_KEY_SMS, smsCode);
         defaultSmsSender.send(ServletRequestUtils.getRequiredStringParameter(request, "mobile"), smsCode.getCode());
     }
-
 }

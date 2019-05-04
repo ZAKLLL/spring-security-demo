@@ -45,8 +45,5 @@ public class SmsAuthenticationToken extends AbstractAuthenticationToken {
         }
     }
 
-    public void eraseCredentials() {
-        super.eraseCredentials();
-    }
 
 }

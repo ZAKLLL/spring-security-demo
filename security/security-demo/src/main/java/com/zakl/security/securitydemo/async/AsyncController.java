@@ -29,7 +29,7 @@ public class AsyncController {
     @RequestMapping("/async/order")
     public Callable<String> order(@RequestParam("order") String order) {
         logger.info("主线程开始");
-        Callable<String> result=new Callable<String>() {
+        Callable<String> result = new Callable<String>() {
             @Override
             public String call() throws Exception {
                 logger.info("副线程开始执行");
@@ -59,10 +59,5 @@ public class AsyncController {
         logger.info("主线程执行完毕");
 
         return result;
-
-
-
     }
-
-
 }

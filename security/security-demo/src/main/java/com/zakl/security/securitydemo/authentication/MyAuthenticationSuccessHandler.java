@@ -41,6 +41,7 @@ public class MyAuthenticationSuccessHandler extends SavedRequestAwareAuthenticat
         logger.info("登录成功");
 
 
+        //判断登录类型，确定返回数据类型
         if (securityProperties.getBroswer().getLoginType() == LoginType.JSON) {
 
             httpServletResponse.setContentType("application/json;charset=UTF-8");

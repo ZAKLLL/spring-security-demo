@@ -51,8 +51,10 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
         super.afterPropertiesSet();
         String[] configUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(
                 securityProperties.getCode().getImage().getUrl(), ",");
-        for (String configUrl : configUrls) {
-            urls.add(configUrl);
+        if (configUrls != null) {
+            for (String configUrl : configUrls) {
+                urls.add(configUrl);
+            }
         }
         urls.add("/authentication/form");
     }
@@ -90,7 +92,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
     //执行验证码校对逻辑，如果校对失败返回自定义异常
     private void validate(ServletWebRequest servletWebRequest) throws ServletRequestBindingException {
         //从session中取出imageCode
-        ImageCode imageCodeInSession = (ImageCode) sessionStrategy.getAttribute(servletWebRequest, ValidateController.SESSION_KEY_IMAGE);
+        ValidateCode imageCodeInSession = (ValidateCode) sessionStrategy.getAttribute(servletWebRequest, ValidateController.SESSION_KEY_IMAGE);
 
         //从request中取出imageCode
         String imageCodeInRequest = ServletRequestUtils.getStringParameter(servletWebRequest.getRequest(), "imageCode");

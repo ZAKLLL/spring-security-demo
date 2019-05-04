@@ -53,9 +53,11 @@ public class SmsCodeFilter extends OncePerRequestFilter implements InitializingB
     public void afterPropertiesSet() throws ServletException {
         super.afterPropertiesSet();
         String[] configUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(
-                securityProperties.getCode().getSms().getUrl(), ",");
-        for (String configUrl : configUrls) {
-            urls.add(configUrl);
+        securityProperties.getCode().getSms().getUrl(), ",");
+        if (configUrls != null) {
+            for (String configUrl : configUrls) {
+                urls.add(configUrl);
+            }
         }
         urls.add("/authentication/mobile");
     }
@@ -72,9 +74,9 @@ public class SmsCodeFilter extends OncePerRequestFilter implements InitializingB
         }
 
         //当请求中包含登录请求时候进行验证,当
-        if (StringUtils.equals("/authentication/form", httpServletRequest.getRequestURI())
+        if (StringUtils.equals("/authentication/mobile", httpServletRequest.getRequestURI())
                 && StringUtils.equalsIgnoreCase(httpServletRequest.getMethod(), "post")) {
-            logger.info("开始进行图形验证码校验");
+            logger.info("开始进行sms验证码校验");
             try {
                 //验证封装后的httpServletRequest
                 validate(new ServletWebRequest(httpServletRequest));
@@ -86,6 +88,7 @@ public class SmsCodeFilter extends OncePerRequestFilter implements InitializingB
             }
 
         }
+
         filterChain.doFilter(httpServletRequest, httpServletResponse);
 
     }
@@ -96,7 +99,7 @@ public class SmsCodeFilter extends OncePerRequestFilter implements InitializingB
         ValidateCode validateCodeinsession = (ValidateCode) sessionStrategy.getAttribute(servletWebRequest, ValidateController.SESSION_KEY_SMS);
 
         //从request中取出smsCode
-        String smsCode = ServletRequestUtils.getStringParameter(servletWebRequest.getRequest(), "mobile");
+        String smsCode = ServletRequestUtils.getStringParameter(servletWebRequest.getRequest(), "smsCode");
 
         if (StringUtils.isBlank(smsCode)) {
             throw new ValidateCodeException("验证码不能为空");

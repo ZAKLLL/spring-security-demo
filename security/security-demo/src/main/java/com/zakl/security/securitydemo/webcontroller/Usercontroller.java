@@ -5,7 +5,6 @@ import com.zakl.security.securitydemo.dto.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
-import org.springframework.boot.actuate.endpoint.SecurityContext;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,7 +44,7 @@ public class Usercontroller {
     //使用@Valid 与BindingResult 进行配合使用，当校验失败时候，会将错误信息放入errors
     public void create(@Valid @RequestBody User user, BindingResult errors) {
         if (errors.hasErrors()) {
-            errors.getAllErrors().stream().forEach(error->System.out.println(error.getDefaultMessage()));
+            errors.getAllErrors().stream().forEach(error -> System.out.println(error.getDefaultMessage()));
         }
         System.out.println(user.getId() + " " + user.getUsername() + " " + user.getPassword());
     }
@@ -70,9 +69,4 @@ public class Usercontroller {
         return detail;
 
     }
-
-
-
-
-
 }

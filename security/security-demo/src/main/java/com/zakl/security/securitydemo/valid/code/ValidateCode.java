@@ -2,6 +2,7 @@ package com.zakl.security.securitydemo.valid.code;
 
 import javax.validation.Valid;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -10,7 +11,8 @@ import java.time.LocalDateTime;
  * @author: Mr.Wang
  * @create: 2019-03-19 19:24
  **/
-public class ValidateCode {
+//实现序列化，让session能够放入redis
+public class ValidateCode implements Serializable {
     private String code;
     private LocalDateTime expireTime; //过期时间点
 

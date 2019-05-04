@@ -32,12 +32,14 @@ public class SmsAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         SmsAuthenticationToken smsAuthenticationToken = (SmsAuthenticationToken) authentication;
+        //进行认证
         UserDetails user = userDetailsService.loadUserByUsername((String) smsAuthenticationToken.getPrincipal());
         if (user == null) {
             throw new InternalAuthenticationServiceException("无法获取用户信息");
         }
         SmsAuthenticationToken smsAuthenticationResult = new SmsAuthenticationToken(user, user.getAuthorities());
-        smsAuthenticationToken.setDetails(smsAuthenticationResult.getDetails());
+        //将未认证的token中的信息传到已认证的token中去
+        smsAuthenticationToken.setDetails(authentication.getDetails());
         return smsAuthenticationResult;
     }
 

@@ -48,7 +48,6 @@ public class ImageCodeGenerator implements ValidateCodeGenerator {
         private int width;
         private int height;
         private int length;
-        //todo 添加构造函数，宽高验证码长度
 
 
         public ImageImpl(int width, int height, int length, HttpServletRequest request) {

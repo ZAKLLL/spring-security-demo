@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class BroswerProperties {
     private String loginPage = "/signIn.html";
 
-    private LoginType loginType = LoginType.JSON;
+    private LoginType loginType = LoginType.REDIRECT;
 
     private int rememberMeSeconds = 3600;
 

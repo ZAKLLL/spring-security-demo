@@ -39,22 +39,29 @@ public class SecurityController {
     //请求转发工具类
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    @RequestMapping("/authentication/require")
+        @RequestMapping("/authentication/require")
+        @ResponseBody
+        @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+        public ResultMessage requireAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+            SavedRequest savedRequest = requestCache.getRequest(request, response);
+            if (savedRequest !=null) {
+                String targetUrl = savedRequest.getRedirectUrl();
+                logger.info("引发跳转的请求是:" + targetUrl);
+                if (StringUtils.endsWithIgnoreCase(targetUrl, ".html")) {
+                    redirectStrategy.sendRedirect(request,response,properties.getBroswer().getLoginPage());
+                }
+
+            }
+        return new ResultMessage("20000","访问用户需要进行身份验证请引导用户进行登录");
+    }
+
+    @RequestMapping("/session/invalid")
     @ResponseBody
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    public ResultMessage requireAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        SavedRequest savedRequest = requestCache.getRequest(request, response);
-        if (savedRequest !=null) {
-            String targetUrl = savedRequest.getRedirectUrl();
-            logger.info("引发跳转的请求是:" + targetUrl);
-            if (StringUtils.endsWithIgnoreCase(targetUrl, ".html")) {
-                redirectStrategy.sendRedirect(request,response,properties.getBroswer().getLoginPage());
-            }
-
-        }
-
-        return new ResultMessage("20000","访问用户需要进行身份验证请引导用户进行登录");
+    public ResultMessage invalid() {
+        String msg = "用户sessions失效";
+        return new ResultMessage("100", msg);
     }
 
 }

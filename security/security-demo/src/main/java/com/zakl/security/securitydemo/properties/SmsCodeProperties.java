@@ -6,10 +6,9 @@ package com.zakl.security.securitydemo.properties;
  * @author: Mr.Wang
  * @create: 2019-03-20 08:00
  **/
-public class
-SmsCodeProperties {
-    private int length=6;
-    private int expireIn=6;
+public class SmsCodeProperties {
+    private int length = 6;
+    private int expireIn = 60;
     private String url;
 
     public String getUrl() {

@@ -1,7 +1,6 @@
 package com.zakl.security.securitydemo.authentication.mobile;
 
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -26,6 +25,8 @@ public class SmsAuthenticationFilter  extends AbstractAuthenticationProcessingFi
         super(new AntPathRequestMatcher("/authentication/mobile", "POST"));
     }
 
+
+    //返回未认认证的Authentication
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         if (this.postOnly && !request.getMethod().equals("POST")) {
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
@@ -45,6 +46,7 @@ public class SmsAuthenticationFilter  extends AbstractAuthenticationProcessingFi
     }
 
 
+    //获取手机号的方法
     protected String obtainMobile(HttpServletRequest request) {
         return request.getParameter(this.mobileParameter);
     }
